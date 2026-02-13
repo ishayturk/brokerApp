@@ -2,112 +2,119 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מתווך-PRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>מתווך-PRO: שלב 1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: system-ui, sans-serif; background-color: #f1f5f9; margin: 0; }
-        /* הגבלת רוחב למחשב כדי שלא ימרח */
-        .app-container { max-width: 500px; margin: 0 auto; background: white; min-height: 100vh; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
-        .content-area { padding: 20px; padding-bottom: 100px; }
+        body { font-family: system-ui, sans-serif; background-color: #f1f5f9; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        #main-content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 90px; }
         .hidden { display: none !important; }
-        
-        /* תפריט תחתון שמתאים לרוחב המיכל */
         nav { 
-            position: absolute; bottom: 0; left: 0; right: 0; height: 70px; 
-            background: #ffffff; display: flex; border-top: 2px solid #e2e8f0; 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 70px; 
+            background: white; display: flex; border-top: 2px solid #e2e8f0; 
+            z-index: 9999;
         }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: none; background: none; }
-        .active-nav { color: #2563eb; font-weight: bold; }
-        
-        .lesson-card { background: #f8fafc; padding: 20px; border-radius: 15px; border-right: 5px solid #2563eb; line-height: 1.6; }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border: none; background: none; color: #64748b; font-weight: bold; }
+        .active-nav { color: #2563eb; border-top: 3px solid #2563eb; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <header class="bg-blue-600 p-4 text-center text-white font-bold text-xl shadow-md">
-        מתווך-PRO
+    <header class="bg-white p-4 text-center shadow-sm font-bold text-blue-600 border-b">
+        מתווך-PRO <span class="text-xs text-gray-400">(v1.0)</span>
     </header>
 
-    <div class="content-area">
-        <div id="screen-home">
-            <div class="bg-blue-50 p-6 rounded-2xl mb-6 text-center">
-                <h2 class="text-xl font-bold text-blue-800">ברוך הבא, ישי</h2>
-                <p class="text-gray-600">הפרק הראשון מחכה לך</p>
+    <main id="main-content">
+        <div id="screen-home" class="flex flex-col gap-4">
+            <div class="bg-blue-600 p-6 rounded-2xl text-white shadow-lg">
+                <h2 class="text-xl font-bold">ברוך הבא ללימוד תיווך</h2>
+                <p class="text-sm opacity-90">מתחילים בצעדים קטנים.</p>
             </div>
             
-            <button onclick="goTo('lessons')" class="w-full bg-white border-2 border-blue-500 p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-blue-50 transition-all">
+            <button onclick="changeTab('lessons')" class="w-full bg-white p-6 rounded-2xl border-2 border-blue-500 shadow-sm flex items-center gap-4 active:scale-95 transition-all">
                 <span class="text-3xl">📚</span>
                 <div class="text-right">
-                    <div class="font-bold text-lg text-gray-800">שיעורי לימוד</div>
-                    <div class="text-xs text-blue-500">לחץ להתחלת הפרק הראשון</div>
+                    <div class="font-bold text-lg">שיעורי לימוד</div>
+                    <div class="text-xs text-blue-400">לחץ כאן כדי להתחיל</div>
                 </div>
             </button>
+
+            <div class="p-4 bg-gray-100 rounded-xl text-center text-gray-500 text-sm italic">
+                המבחנים יהיו זמינים בשלב הבא...
+            </div>
         </div>
 
-        <div id="screen-lessons" class="hidden">
-            <h3 class="font-bold text-lg mb-4 text-gray-800 underline decoration-blue-500">פרקי לימוד זמינים:</h3>
-            <div onclick="goTo('study')" class="bg-white border p-5 rounded-xl flex justify-between items-center cursor-pointer shadow-sm active:scale-95 transition-all">
-                <span class="font-bold">1. רישוי ואגרות (מלא)</span>
-                <span class="text-blue-500">📖</span>
+        <div id="screen-lessons-list" class="hidden">
+            <h3 class="font-bold text-lg mb-4">רשימת פרקים:</h3>
+            <div id="lessons-grid" class="space-y-3">
+                <div onclick="openSingleLesson()" class="bg-white p-5 rounded-xl border-2 border-slate-100 shadow-sm flex justify-between items-center cursor-pointer active:bg-blue-50">
+                    <span class="font-bold text-slate-800">1. רישוי ואגרות</span>
+                    <span class="text-blue-500">התחל ⬅️</span>
+                </div>
             </div>
         </div>
 
         <div id="screen-study" class="hidden">
-            <button onclick="goTo('lessons')" class="text-blue-600 font-bold mb-4">← חזרה</button>
-            <div class="lesson-card">
-                <h2 class="text-2xl font-bold mb-4 text-blue-700">פרק 1: רישוי ואגרות</h2>
-                <p class="mb-4">כדי לעסוק בתיווך מקרקעין בישראל, <b class="text-blue-600">חובה להחזיק ברישיון בתוקף</b>.</p>
-                
-                <h3 class="font-bold text-lg mb-2">תנאי סף לקבלת רישיון:</h3>
-                <ul class="list-disc pr-5 mb-4 space-y-2">
-                    <li><b>גיל:</b> מעל 18.</li>
-                    <li><b>אזרחות:</b> אזרח או תושב ישראל.</li>
-                    <li><b>עבר פלילי:</b> ללא הרשעה עם קלון ב-5 השנים האחרונות.</li>
-                    <li><b>פשיטת רגל:</b> לא פושט רגל שלא קיבל הפטר.</li>
-                    <li><b>מבחן:</b> הצלחה בבחינת רשם המתווכים.</li>
-                </ul>
-
-                <h3 class="font-bold text-lg mb-2 text-red-600">אגרות (חשוב למבחן):</h3>
-                <p>מתווך חייב לשלם אגרה שנתית עד ה-<b>31 במרץ</b>. אם לא שילמת - הרישיון מושעה! אם סגרת עסקה בזמן שהרישיון מושעה, <b>אינך זכאי לדמי תיווך</b>.</p>
+            <button onclick="changeTab('lessons')" class="text-blue-600 font-bold mb-4 flex items-center">
+                <span class="ml-1">🏠</span> חזרה לרשימה
+            </button>
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+                <h2 class="text-2xl font-bold text-blue-800 mb-4">חוק המתווכים - רישוי</h2>
+                <div class="prose text-slate-700 leading-relaxed space-y-4">
+                    <p>כדי לעבוד כמתווך מקרקעין בישראל, חייבים רישיון בתוקף.</p>
+                    <h3 class="font-bold text-lg text-slate-800 border-r-4 border-blue-500 pr-2">תנאי הסף (סעיף 5):</h3>
+                    <ul class="list-disc pr-5 space-y-2">
+                        <li><b>גיל:</b> מעל 18.</li>
+                        <li><b>אזרחות:</b> אזרח או תושב ישראל.</li>
+                        <li><b>עבר פלילי:</b> ללא עבירה עם קלון ב-5 שנים האחרונות.</li>
+                        <li><b>כלכלי:</b> לא פושט רגל.</li>
+                        <li><b>הצלחה:</b> מעבר בחינת רשם המתווכים.</li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <nav>
-        <div onclick="goTo('home')" id="btn-home" class="nav-btn active-nav">
-            <span class="text-xl">🏠</span><span class="text-xs">בית</span>
-        </div>
-        <div onclick="goTo('lessons')" id="btn-lessons" class="nav-btn">
-            <span class="text-xl">📚</span><span class="text-xs">לימוד</span>
-        </div>
+        <button onclick="changeTab('home')" id="nav-home" class="nav-btn active-nav">
+            <span>🏠</span><span class="text-[10px]">בית</span>
+        </button>
+        <button onclick="changeTab('lessons')" id="nav-lessons" class="nav-btn">
+            <span>📚</span><span class="text-[10px]">לימוד</span>
+        </button>
     </nav>
-</div>
 
-<script>
-    function goTo(screenId) {
-        // הסתרת כל המסכים
-        document.getElementById('screen-home').classList.add('hidden');
-        document.getElementById('screen-lessons').classList.add('hidden');
-        document.getElementById('screen-study').classList.add('hidden');
-        
-        // הסרת עיצוב כפתורים
-        document.getElementById('btn-home').classList.remove('active-nav');
-        document.getElementById('btn-lessons').classList.remove('active-nav');
+    <script>
+        // הפונקציה היחידה שצריך כרגע - החלפת מסכים
+        function changeTab(tabName) {
+            // 1. הסתרת כל המסכים
+            document.getElementById('screen-home').classList.add('hidden');
+            document.getElementById('screen-lessons-list').classList.add('hidden');
+            document.getElementById('screen-study').classList.add('hidden');
 
-        // הצגת המסך הנבחר
-        const target = screenId === 'study' ? 'screen-study' : 'screen-' + screenId;
-        document.getElementById(target).classList.remove('hidden');
+            // 2. הסרת עיצוב כפתורי ניווט
+            document.getElementById('nav-home').classList.remove('active-nav');
+            document.getElementById('nav-lessons').classList.remove('active-nav');
 
-        // עדכון כפתור ניווט
-        if(screenId === 'home') document.getElementById('btn-home').classList.add('active-nav');
-        if(screenId === 'lessons' || screenId === 'study') document.getElementById('btn-lessons').classList.add('active-nav');
+            // 3. הצגת המסך הנבחר
+            if (tabName === 'home') {
+                document.getElementById('screen-home').classList.remove('hidden');
+                document.getElementById('nav-home').classList.add('active-nav');
+            } else if (tabName === 'lessons') {
+                document.getElementById('screen-lessons-list').classList.remove('hidden');
+                document.getElementById('nav-lessons').classList.add('active-nav');
+            }
+            
+            // גלילה לראש הדף
+            document.getElementById('main-content').scrollTop = 0;
+        }
 
-        // גלילה למעלה
-        window.scrollTo(0,0);
-    }
-</script>
-
+        // פונקציה לפתיחת השיעור הספציפי
+        function openSingleLesson() {
+            document.getElementById('screen-lessons-list').classList.add('hidden');
+            document.getElementById('screen-study').classList.remove('hidden');
+            document.getElementById('main-content').scrollTop = 0;
+        }
+    </script>
 </body>
 </html>
