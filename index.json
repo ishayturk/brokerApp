@@ -1,50 +1,15 @@
 {
-  "info": "FILE_NAME: index.json | CREATED_AT: 2026-02-13 16:45 | VERSION: 2.2.0",
+  "info": "FILE_NAME: index.json | CREATED_AT: 2026-02-13 17:05 | VERSION: 2.3.0",
   "lessons": [
-    {
-      "id": 1,
-      "title": "1. רישוי ואגרות",
-      "file": "lesson1.json"
-    },
-    {
-      "id": 2,
-      "title": "2. דרישת הכתב והזמנה",
-      "file": "lesson2.json"
-    },
-    {
-      "id": 3,
-      "title": "3. בלעדיות ופעולות שיווק",
-      "file": "lesson3.json"
-    },
-    {
-      "id": 4,
-      "title": "4. חוק המקרקעין ורישום",
-      "file": "lesson4.json"
-    },
-    {
-      "id": 5,
-      "title": "5. בתים משותפים",
-      "file": "lesson5.json"
-    },
-    {
-      "id": 6,
-      "title": "6. חוק החוזים",
-      "file": "lesson6.json"
-    },
-    {
-      "id": 7,
-      "title": "7. הגנת הצרכן וחוק המכר",
-      "file": "lesson7.json"
-    },
-    {
-      "id": 8,
-      "title": "8. מיסוי מקרקעין",
-      "file": "lesson8.json"
-    },
-    {
-      "id": 9,
-      "title": "9. תכנון ובנייה",
-      "file": "lesson9.json"
-    }
+    {"id": 1, "title": "1. רישוי ואגרות", "file": "lesson1.json"},
+    {"id": 2, "title": "2. דרישת הכתב והזמנה", "file": "lesson2.json"},
+    {"id": 3, "title": "3. בלעדיות ופעולות שיווק", "file": "lesson3.json"},
+    {"id": 4, "title": "4. חוק המקרקעין ורישום", "file": "lesson4.json"},
+    {"id": 5, "title": "5. בתים משותפים", "file": "lesson5.json"},
+    {"id": 6, "title": "6. חוק החוזים", "file": "lesson6.json"},
+    {"id": 7, "title": "7. הגנת הצרכן וחוק המכר", "file": "lesson7.json"},
+    {"id": 8, "title": "8. מיסוי מקרקעין", "file": "lesson8.json"},
+    {"id": 9, "title": "9. תכנון ובנייה", "file": "lesson9.json"},
+    {"id": 10, "title": "10. אתיקה ועונשין", "file": "lesson10.json"}
   ]
 }
