@@ -1,4 +1,4 @@
-// FILE_NAME: app.js | VERSION: 2.5.0 (Super Stable)
+// FILE_NAME: app.js | VERSION: 2.6.0 (Force Parse)
 let lessonsData = [];
 let currentQuiz = [];
 let quizIdx = 0;
@@ -13,66 +13,51 @@ async function loadData() {
         const response = await fetch(`./index.json?v=${Date.now()}`);
         if (!response.ok) throw new Error("לא נמצא קובץ index.json");
         
-        let indexData = await response.json();
+        let rawData = await response.text(); // קורא כטקסט גולמי
+        let indexData;
         
-        // תיקון לשגיאת ה-map: מוודא שאנחנו עובדים עם מערך
-        if (!Array.isArray(indexData)) {
-            if (indexData.lessons) {
-                indexData = indexData.lessons;
-            } else {
-                throw new Error("מבנה קובץ index.json לא תקין");
-            }
+        try {
+            indexData = JSON.parse(rawData); // הופך לאובייקט JS
+        } catch (e) {
+            throw new Error("קובץ index.json אינו בפורמט JSON תקין");
         }
         
-        const promises = indexData.map(item => 
-            fetch(`./${item.file}?v=${Date.now()}`).then(async r => {
-                if (!r.ok) throw new Error(`קובץ חסר: ${item.file}`);
-                return r.json();
-            })
+        // וידוי שהנתונים הם מערך (Array)
+        let list = Array.isArray(indexData) ? indexData : (indexData.lessons || []);
+        
+        if (list.length === 0) throw new Error("רשימת השיעורים ריקה");
+
+        const promises = list.map(item => 
+            fetch(`./${item.file}?v=${Date.now()}`).then(r => r.json())
         );
         
         lessonsData = await Promise.all(promises);
+        renderLessonsList();
         if(tag) tag.textContent = `${completedLessons.length} מתוך ${lessonsData.length} הושלמו`;
-        console.log("המערכת מוכנה");
     } catch (e) {
         console.error(e);
         if(log) log.textContent = "שגיאה: " + e.message;
-        if(tag) tag.textContent = "שגיאת טעינה";
     }
 }
 
 function showTab(tab) {
     clearInterval(timerInterval);
     document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
-    
-    let target = 'screen-home';
-    if(tab === 'lessons') target = 'screen-lessons-list';
-    if(tab === 'exams') target = 'screen-quiz';
-    
-    const el = document.getElementById(target);
-    if(el) el.classList.remove('hidden');
-
+    let target = tab === 'lessons' ? 'screen-lessons-list' : (tab === 'exams' ? 'screen-quiz' : 'screen-home');
+    document.getElementById(target).classList.remove('hidden');
     if(tab === 'lessons') renderLessonsList();
     if(tab === 'exams') startFullExam();
-    document.getElementById('main-content').scrollTop = 0;
 }
 
 function renderLessonsList() {
     const grid = document.getElementById('lessons-grid');
-    if(!grid) return;
-    grid.innerHTML = lessonsData.map((l, i) => {
-        const isDone = completedLessons.includes(i);
-        return `
-            <div onclick="openLesson(${i})" class="bg-white p-5 rounded-xl border-2 ${isDone ? 'border-green-200 bg-green-50' : 'border-transparent'} shadow-sm flex justify-between items-center cursor-pointer active:scale-95">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-lg ${isDone ? 'bg-green-500 text-white' : 'bg-blue-100 text-blue-600'} flex items-center justify-center font-black">
-                        ${isDone ? '✓' : i + 1}
-                    </div>
-                    <span class="font-bold text-slate-700">${l.title}</span>
-                </div>
-            </div>
-        `;
-    }).join('');
+    if(!grid || lessonsData.length === 0) return;
+    grid.innerHTML = lessonsData.map((l, i) => `
+        <div onclick="openLesson(${i})" class="bg-white p-5 rounded-xl border shadow-sm mb-2 flex justify-between items-center cursor-pointer">
+            <span class="font-bold">${l.title}</span>
+            <span>${completedLessons.includes(i) ? '✅' : '⬅️'}</span>
+        </div>
+    `).join('');
 }
 
 function openLesson(i) {
@@ -81,14 +66,10 @@ function openLesson(i) {
     s.classList.remove('hidden');
     s.dataset.idx = i;
     document.getElementById('lesson-body').innerHTML = lessonsData[i].content;
-    
     if(!completedLessons.includes(i)) {
         completedLessons.push(i);
         localStorage.setItem('broker_completed_v2', JSON.stringify(completedLessons));
-        const tag = document.getElementById('progress-tag');
-        if(tag) tag.textContent = `${completedLessons.length} מתוך ${lessonsData.length} הושלמו`;
     }
-    document.getElementById('main-content').scrollTop = 0;
 }
 
 function startChapterQuiz() {
@@ -100,7 +81,6 @@ function startChapterQuiz() {
 function startFullExam() {
     let allQ = [];
     lessonsData.forEach(l => { if(l.questions) allQ = [...allQ, ...l.questions]; });
-    if(allQ.length === 0) return;
     currentQuiz = allQ.sort(() => 0.5 - Math.random()).slice(0, 25);
     initQuiz(3600);
 }
@@ -109,12 +89,6 @@ function initQuiz(sec) {
     quizIdx = 0; score = 0;
     document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
     document.getElementById('screen-quiz').classList.remove('hidden');
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        let m = Math.floor(sec/60), s = sec%60;
-        document.getElementById('timer').textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
-        if(--sec < 0) { clearInterval(timerInterval); showTab('home'); }
-    }, 1000);
     renderQuestion();
 }
 
@@ -124,21 +98,13 @@ function renderQuestion() {
     document.getElementById('q-text').textContent = q.q;
     document.getElementById('explanation').classList.add('hidden');
     document.getElementById('options').innerHTML = q.options.map((opt, i) => `
-        <button onclick="checkAns(${i})" class="w-full text-right p-4 border-2 border-slate-100 rounded-xl font-bold bg-slate-50">${opt}</button>
+        <button onclick="checkAns(${i})" class="w-full text-right p-4 border rounded-xl mb-2 bg-slate-50">${opt}</button>
     `).join('');
 }
 
 function checkAns(i) {
-    if(!document.getElementById('explanation').classList.contains('hidden')) return;
     const q = currentQuiz[quizIdx];
-    const btns = document.getElementById('options').children;
-    if(i === q.correct) {
-        btns[i].classList.add('border-green-500', 'bg-green-50');
-        score++;
-    } else {
-        btns[i].classList.add('border-red-500', 'bg-red-50');
-        btns[q.correct].classList.add('border-green-500', 'bg-green-50');
-    }
+    if(i === q.correct) score++;
     document.getElementById('exp-text').textContent = q.exp;
     document.getElementById('explanation').classList.remove('hidden');
 }
