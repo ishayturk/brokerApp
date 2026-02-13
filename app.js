@@ -1,6 +1,4 @@
-// FILE_NAME: app.js
-// VERSION: 2.3.1 (Fixed Loading)
-
+// FILE_NAME: app.js | VERSION: 2.4.0
 let lessonsData = [];
 let currentQuiz = [];
 let quizIdx = 0;
@@ -10,30 +8,26 @@ let completedLessons = JSON.parse(localStorage.getItem('broker_completed_v2')) |
 
 async function loadData() {
     try {
-        const tag = document.getElementById('progress-tag');
-        // טעינת הקובץ המרכזי
-        const response = await fetch(`index.json?v=${new Date().getTime()}`);
-        const data = await response.json();
+        // טעינת האינדקס - שימוש בנתיב יחסי
+        const response = await fetch(`./index.json?v=${new Date().getTime()}`);
+        if (!response.ok) throw new Error("Could not find index.json");
+        const indexData = await response.json();
         
-        // כאן התיקון הקריטי: ניגשים ל-data.lessons
-        const indexData = data.lessons; 
-        
-        // טעינת כל קבצי השיעורים
+        // טעינת כל השיעורים במקביל
         const promises = indexData.map(item => 
-            fetch(`${item.file}?v=${new Date().getTime()}`).then(r => {
+            fetch(`./${item.file}?v=${new Date().getTime()}`).then(r => {
                 if (!r.ok) throw new Error(`Missing: ${item.file}`);
                 return r.json();
             })
         );
         
         lessonsData = await Promise.all(promises);
-        console.log("נתונים נטענו בהצלחה:", lessonsData);
+        console.log("Data loaded successfully");
         updateHomeProgress();
     } catch (e) {
-        console.error("שגיאה בטעינה:", e);
-        if(document.getElementById('progress-tag')) {
-            document.getElementById('progress-tag').textContent = "שגיאת נתונים";
-        }
+        console.error("Load Error:", e);
+        const tag = document.getElementById('progress-tag');
+        if(tag) tag.textContent = "שגיאה בטעינת נתונים";
     }
 }
 
@@ -53,7 +47,9 @@ function showTab(tab) {
     if(tab === 'lessons') target = 'screen-lessons-list';
     if(tab === 'exams') target = 'screen-quiz';
     
-    document.getElementById(target).classList.remove('hidden');
+    const targetEl = document.getElementById(target);
+    if(targetEl) targetEl.classList.remove('hidden');
+    
     const navBtn = document.getElementById(`nav-${tab}`);
     if(navBtn) navBtn.classList.add('active');
 
@@ -67,7 +63,7 @@ function renderLessonsList() {
     if(!grid) return;
     
     if(lessonsData.length === 0) {
-        grid.innerHTML = "<p class='text-center text-slate-400'>טוען שיעורים...</p>";
+        grid.innerHTML = "<div class='text-center p-10 text-slate-500'>טוען תכנים... וודא שחיברת את כל הקבצים</div>";
         return;
     }
 
@@ -111,7 +107,7 @@ function startChapterQuiz() {
 function startFullExam() {
     let allQ = [];
     lessonsData.forEach(l => { if(l.questions) allQ = [...allQ, ...l.questions]; });
-    if(allQ.length === 0) { alert("אין מספיק שאלות למבחן"); return; }
+    if(allQ.length === 0) { alert("לא נמצאו שאלות במערכת"); return; }
     currentQuiz = allQ.sort(() => 0.5 - Math.random()).slice(0, 25);
     initQuiz(3600);
 }
@@ -157,9 +153,13 @@ function checkAns(i) {
 
 function nextQuestion() {
     if(++quizIdx < currentQuiz.length) renderQuestion();
-    else { clearInterval(timerInterval); alert(`סיום! ציון: ${Math.round(score/currentQuiz.length*100)}`); showTab('home'); }
+    else { 
+        clearInterval(timerInterval); 
+        alert(`המבחן הסתיים! ציון: ${Math.round(score/currentQuiz.length*100)}`); 
+        showTab('home'); 
+    }
 }
 
-// הפעלה ראשונית
+// התחלה
 loadData();
 showTab('home');
