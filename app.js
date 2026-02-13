@@ -1,147 +1,101 @@
-// FILE_NAME: app.js | VERSION: 3.0.0 (Full Content Integration)
+// FILE_NAME: app.js | VERSION: 4.0.0 (FULL CONTENT)
 
 const internalLessons = [
     {
         title: "1. רישוי ואגרות",
-        content: "<h2>פרק 1: חוק המתווכים - רישוי</h2><p>כדי לעסוק בתיווך מקרקעין בישראל, חובה להחזיק ברישיון בתוקף מטעם רשם המתווכים.</p><h3>תנאי סף לקבלת רישיון:</h3><ul><li>אזרח או תושב ישראל.</li><li>מלאו לו 18 שנים.</li><li>לא הוכרז כפושט רגל.</li><li>לא הורשע בעבירה שיש עמה קלון ב-5 השנים האחרונות.</li><li>עבר בהצלחה את בחינת רשם המתווכים.</li></ul><h3>אגרות:</h3><p>על המתווך לשלם אגרה שנתית. אי תשלום האגרה בזמן משמעו שהרישיון אינו בתוקף לאותה תקופה.</p>",
+        content: "<h2>פרק 1: חוק המתווכים - רישוי</h2><p>כדי לעסוק בתיווך מקרקעין בישראל, חובה להחזיק ברישיון בתוקף מטעם רשם המתווכים.</p><h3>תנאי סף לקבלת רישיון (סעיף 5):</h3><ul><li><b>אזרחות:</b> אזרח או תושב ישראל (או תושב חוץ עם היתר עבודה).</li><li><b>גיל:</b> מלאו לו 18 שנים.</li><li><b>יושרה:</b> לא הוכרז כפושט רגל (אלא אם קיבל הפטר).</li><li><b>עבר פלילי:</b> לא הורשע בעבירה שיש עמה קלון ב-5 השנים האחרונות.</li><li><b>בחינה:</b> עבר בהצלחה את בחינת רשם המתווכים.</li></ul><h3>אגרות (סעיף 18):</h3><p>על המתווך לשלם אגרה שנתית עד ה-31 במרץ. אם לא שילם, רישיונו אינו בתוקף לאותה תקופה והוא אינו זכאי לדמי תיווך, גם אם ביצע את העסקה בצורה מושלמת.</p>",
         questions: [
             {
-                q: "מה קורה אם מתווך לא שילם את האגרה השנתית במועד?",
-                options: ["הוא יקבל קנס כספי בלבד", "רישיונו מותלה אוטומטית והוא לא זכאי לדמי תיווך", "הוא יוכל לשלם בשנה הבאה ללא סנקציה", "הוא חייב לעבור את הבחינה מחדש"],
+                q: "מתווך ביצע עסקה מושלמת אך התברר שלא שילם את האגרה השנתית במועד. האם הוא זכאי לדמי תיווך?",
+                options: ["כן, כי העבודה בוצעה", "לא, רישיונו אינו בתוקף והוא אינו זכאי לתשלום", "כן, בתנאי שישלם קנס לרשם", "רק אם הלקוח מסכים מרצונו"],
                 correct: 1,
-                exp: "לפי סעיף 18 לחוק, מתווך שלא שילם את האגרה לא רשאי לשמש כמתווך באותה תקופה."
+                exp: "לפי סעיף 18, אי תשלום האגרה מבטל את תוקף הרישיון ומונע זכאות לדמי תיווך."
             }
         ]
     },
     {
         title: "2. דרישת הכתב והזמנה",
-        content: "<h2>פרק 2: הזמנה בכתב</h2><p>מתווך במקרקעין לא יהיה זכאי לדמי תיווך אלא אם כן חתם הלקוח על הזמנה בכתב לביצוע פעולת תיווך במקרקעין.</p><h3>פרטי חובה בהזמנה:</h3><ul><li>שמות, כתובות ומספרי זיהוי של המתווך ושל הלקוח.</li><li>סוג העסקה (מכירה, קנייה, שכירות).</li><li>תיאור הנכס נשוא פעולת התיווך.</li><li>מחיר העסקה המבוקשת, בקירוב.</li><li>הסכום המוסכם של דמי התיווך או שיעור דמי התיווך המוסכם מתוך המחיר שבו תתבצע העסקה.</li></ul>",
+        content: "<h2>פרק 2: הזמנה בכתב (סעיף 9)</h2><p>מתווך לא זכאי לדמי תיווך אלא אם הלקוח חתם על הזמנה בכתב. אי אפשר להסתמך על הסכם בעל פה!</p><h3>פרטי חובה (לפי התקנות):</h3><ul><li>שמות ומספרי זהות של המתווך והלקוח.</li><li>סוג העסקה (מכירה/קנייה/שכירות).</li><li>תיאור הנכס (כתובת או פרטים מזהים).</li><li>מחיר העסקה המבוקש (בקירוב).</li><li>דמי התיווך המוסכמים (סכום קבוע או אחוז מהעסקה).</li></ul>",
         questions: [
             {
-                q: "מהו תנאי הכרחי לזכאות למתווך לדמי תיווך לפי חוק המתווכים?",
-                options: ["לחיצת יד בין הצדדים", "הסכם בעל פה בנוכחות עד", "הזמנה בכתב הכוללת את כל פרטי החובה", "רישום העסקה בטאבו"],
-                correct: 2,
-                exp: "סעיף 9(א) קובע שחובה לחתום על הזמנה בכתב הכוללת את הפרטים שנקבעו בתקנות."
+                q: "האם מתווך זכאי לדמי תיווך אם חסר מספר הזהות של הלקוח בטופס?",
+                options: ["לעולם לא", "בית המשפט עשוי לאשר זאת במקרים מסוימים אם שאר הפרטים ברורים", "כן, אין צורך במספר זהות בחוק", "רק אם העסקה מעל מיליון ש\"ח"],
+                correct: 1,
+                exp: "הפסיקה קבעה שבמקרים בהם יש תום לב, חסרון טכני קטן לא תמיד יבטל את הזכאות, אך חובה לשאוף למילוי מלא."
             }
         ]
     },
     {
         title: "3. בלעדיות ופעולות שיווק",
-        content: "<h2>פרק 3: בלעדיות</h2><p>מתווך רשאי להסכים עם לקוח על מתן שירותי תיווך בבלעדיות, בתנאי שמתקיימים התנאים הבאים:</p><ul><li>מתן הבלעדיות ותקופתה יאושרו במסמך נפרד מההזמנה בכתב.</li><li>במהלך תקופת הבלעדיות המתווך יבצע לפחות שתי פעולות שיווק (כמו שלט, פרסום בעיתון, אינטרנט).</li></ul><p>תקופת הבלעדיות בדירה לא תעלה על 6 חודשים (אם לא נקבע זמן, היא תסתיים לאחר 30 יום).</p>",
+        content: "<h2>פרק 3: בלעדיות (סעיף 9ב)</h2><p>בלעדיות דורשת שני מסמכים נפרדים: הזמנת תיווך רגילה וטופס בלעדיות נפרד.</p><h3>תנאי הבלעדיות:</h3><ul><li><b>תקופה:</b> לדירה - עד 6 חודשים. אם לא נקבע זמן - 30 יום.</li><li><b>פעולות שיווק:</b> המתווך חייב לבצע לפחות 2 פעולות שיווק (שלט, עיתון, אתר אינטרנט וכו').</li><li><b>הגורם היעיל:</b> בבלעדיות, יש חזקה שהמתווך הוא הגורם היעיל אם ביצע את פעולות השיווק.</li></ul>",
         questions: [
             {
-                q: "מהי תקופת הבלעדיות המקסימלית למכירת דירה?",
-                options: ["3 חודשים", "6 חודשים", "שנה אחת", "אין הגבלה"],
-                correct: 1,
-                exp: "לפי סעיף 9(ב1), תקופת הבלעדיות לעניין דירה לא תעלה על 6 חודשים."
+                q: "מתווך החתים על בלעדיות לדירה ל-8 חודשים. מה תוקף הבלעדיות?",
+                options: ["8 חודשים כפי שהוסכם", "הבלעדיות בטלה לגמרי", "הבלעדיות תקוצר אוטומטית ל-6 חודשים", "הבלעדיות תקפה רק ל-30 יום"],
+                correct: 2,
+                exp: "החוק מגביל בלעדיות לדירה ל-6 חודשים. כל זמן מעבר לכך מתקצר למקסימום המותר."
             }
         ]
-    }
-    // ניתן להוסיף כאן את שאר הפרקים באותו פורמט
-];
-
-let currentQuiz = [];
-let quizIdx = 0;
-let score = 0;
-let completedLessons = JSON.parse(localStorage.getItem('broker_vfinal')) || [];
-
-function showTab(tab) {
-    document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
-    let target = tab === 'lessons' ? 'screen-lessons-list' : (tab === 'exams' ? 'screen-quiz' : 'screen-home');
-    document.getElementById(target).classList.remove('hidden');
-    
-    // ניהול עיצוב כפתורי הניווט
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('text-blue-600'));
-    
-    if(tab === 'lessons') renderLessons();
-    if(tab === 'exams') startFullExam();
-    
-    document.getElementById('main-content').scrollTop = 0;
-}
-
-function renderLessons() {
-    const grid = document.getElementById('lessons-grid');
-    grid.innerHTML = internalLessons.map((l, i) => `
-        <div onclick="openLesson(${i})" class="bg-white p-5 rounded-xl border shadow-sm mb-2 flex justify-between items-center cursor-pointer active:bg-blue-50">
-            <div class="flex items-center gap-3">
-                <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">${i+1}</span>
-                <span class="font-bold text-slate-700">${l.title}</span>
-            </div>
-            <span>${completedLessons.includes(i) ? '✅' : '⬅️'}</span>
-        </div>
-    `).join('');
-}
-
-function openLesson(i) {
-    document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
-    const s = document.getElementById('screen-study');
-    s.classList.remove('hidden');
-    s.dataset.idx = i;
-    document.getElementById('lesson-body').innerHTML = internalLessons[i].content;
-    
-    if(!completedLessons.includes(i)) {
-        completedLessons.push(i);
-        localStorage.setItem('broker_vfinal', JSON.stringify(completedLessons));
-        updateProgress();
-    }
-}
-
-function startChapterQuiz() {
-    const idx = document.getElementById('screen-study').dataset.idx;
-    currentQuiz = [...internalLessons[idx].questions];
-    initQuiz();
-}
-
-function startFullExam() {
-    let allQ = [];
-    internalLessons.forEach(l => { allQ = [...allQ, ...l.questions]; });
-    if(allQ.length === 0) return;
-    currentQuiz = allQ.sort(() => 0.5 - Math.random()).slice(0, 25);
-    initQuiz();
-}
-
-function initQuiz() {
-    quizIdx = 0; score = 0;
-    document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
-    document.getElementById('screen-quiz').classList.remove('hidden');
-    renderQuestion();
-}
-
-function renderQuestion() {
-    const q = currentQuiz[quizIdx];
-    document.getElementById('counter').textContent = `${quizIdx + 1}/${currentQuiz.length}`;
-    document.getElementById('q-text').textContent = q.q;
-    document.getElementById('explanation').classList.add('hidden');
-    document.getElementById('options').innerHTML = q.options.map((opt, i) => `
-        <button onclick="checkAns(${i})" class="w-full text-right p-4 border rounded-xl bg-slate-50 font-bold active:bg-blue-100">${opt}</button>
-    `).join('');
-}
-
-function checkAns(i) {
-    if(!document.getElementById('explanation').classList.contains('hidden')) return;
-    const q = currentQuiz[quizIdx];
-    const btns = document.getElementById('options').children;
-    if(i === q.correct) {
-        btns[i].classList.add('border-green-500', 'bg-green-50');
-        score++;
-    } else {
-        btns[i].classList.add('border-red-500', 'bg-red-50');
-        btns[q.correct].classList.add('border-green-500', 'bg-green-50');
-    }
-    document.getElementById('exp-text').textContent = q.exp;
-    document.getElementById('explanation').classList.remove('hidden');
-}
-
-function nextQuestion() {
-    if(++quizIdx < currentQuiz.length) renderQuestion();
-    else { alert(`הסתיים! ציון: ${Math.round(score/currentQuiz.length*100)}`); showTab('home'); }
-}
-
-function updateProgress() {
-    const tag = document.getElementById('progress-tag');
-    if(tag) tag.textContent = `${completedLessons.length} מתוך ${internalLessons.length} הושלמו`;
-}
-
-// הפעלה ראשונית
-updateProgress();
-showTab('home');
+    },
+    {
+        title: "4. חוק המקרקעין ורישום",
+        content: "<h2>פרק 4: סוגי זכויות ורישום</h2><ul><li><b>בעלות:</b> הזכות להחזיק ולהשתמש במקרקעין לצמיתות.</li><li><b>שכירות:</b> זכות להחזיק ולהשתמש שלא לצמיתות (מעל 5 שנים: חכירה, מעל 25 שנה: חכירה לדורות).</li><li><b>משכנתה:</b> שיעבוד מקרקעין כערובה לחיוב.</li><li><b>זיקת הנאה:</b> שיעבוד מקרקעין להנאה שאין עמה זכות להחזיק בהם (למשל זכות מעבר).</li></ul><p><b>עסקה במקרקעין:</b> טעונה רישום בטאבו. עסקה שלא נגמרה ברישום נחשבת כ'התחייבות לעסקה' בלבד.</p>",
+        questions: [
+            {
+                q: "מהי 'חכירה לדורות'?",
+                options: ["שכירות של עד 5 שנים", "שכירות לתקופה של מעל 25 שנים", "בעלות מלאה בטאבו", "זכות מעבר בנכס"],
+                correct: 1,
+                exp: "לפי חוק המקרקעין, שכירות מעל 25 שנה נקראת חכירה לדורות."
+            }
+        ]
+    },
+    {
+        title: "5. בתים משותפים",
+        content: "<h2>פרק 5: בית משותף</h2><p>בית שיש בו שתי דירות או יותר והוא נרשם בפנקס הבתים המשותפים.</p><ul><li><b>רכוש משותף:</b> כל חלקי הבית חוץ מהדירות (חדר מדרגות, גג, מקלט).</li><li><b>תקנון:</b> מסמך המסדיר את היחסים בין בעלי הדירות. אם אין תקנון מוסכם, חל 'התקנון המצוי'.</li><li><b>הצמדה:</b> ניתן להצמיד חלק מהרכוש המשותף לדירה מסוימת (למשל חניה או גג).</li></ul>",
+        questions: [
+            {
+                q: "האם ניתן להצמיד את המקלט לדירה מסוימת?",
+                options: ["כן, אם כל השכנים מסכימים", "לא, אסור להצמיד מקלט, מעלית או מדרגות", "רק בבניין חדש", "רק אם המקלט גדול במיוחד"],
+                correct: 1,
+                exp: "חוק המקרקעין אוסר להצמיד חלקי רכוש משותף המשמשים את כולם כמו מקלט ומדרגות."
+            }
+        ]
+    },
+    {
+        title: "6. חוק החוזים",
+        content: "<h2>פרק 6: כריתת חוזה</h2><p>חוזה נכרת בדרך של <b>הצעה וקיבול</b>.</p><ul><li><b>הצעה:</b> פנייה של אדם לחברו שיש בה גמירות דעת ומסוימות.</li><li><b>גמירות דעת:</b> כוונה רצינית להתקשר בחוזה מחייב.</li><li><b>מסוימות:</b> פרטים מספיקים (מחיר, שמות, מועד) המאפשרים לכרות את החוזה.</li><li><b>חוסר תום לב:</b> בניהול משא ומתן יש לנהוג בדרך מקובלת ובתום לב. הפרה עלולה לגרור פיצויים.</li></ul>",
+        questions: [
+            {
+                q: "מהם שני התנאים המרכזיים לתוקף של הצעה?",
+                options: ["חתימה וחותמת", "גמירות דעת ומסוימות", "עורך דין ועדים", "תשלום מקדמה וזכרון דברים"],
+                correct: 1,
+                exp: "הצעה חייבת להעיד על כוונה רצינית (גמירות דעת) ולהכיל מספיק פרטים (מסוימות)."
+            }
+        ]
+    },
+    {
+        title: "7. הגנת הצרכן וחוק המכר",
+        content: "<h2>פרק 7: הגנת הצרכן ומכר דירות</h2><ul><li><b>איסור הטעיה:</b> אסור למתווך להטעות צרכן בעניין מהותי בעסקה.</li><li><b>חוק המכר (דירות):</b> המוכר (קבלן) חייב לצרף מפרט ותוכניות לחוזה.</li><li><b>תקופת בדק:</b> המוכר חייב לתקן ליקויים שנתגלו בדירה (שנה עד 7 שנים לפי סוג הליקוי).</li><li><b>תקופת אחריות:</b> 3 שנים נוספות לאחר תקופת הבדק.</li></ul>",
+        questions: [
+            {
+                q: "מי אחראי על תיקון ליקויים בתקופת הבדק?",
+                options: ["הקונה", "הקבלן (המוכר)", "העירייה", "חברת הביטוח"],
+                correct: 1,
+                exp: "בתקופת הבדק חלה על המוכר האחריות לתקן אי-התאמות אלא אם הוכיח שהקונה אשם."
+            }
+        ]
+    },
+    {
+        title: "8. מיסוי מקרקעין",
+        content: "<h2>פרק 8: מס שבח ומס רכישה</h2><ul><li><b>מס שבח:</b> מס על הרווח שנוצר במכירת הנכס (ההפרש בין מחיר הקנייה למחיר המכירה).</li><li><b>מס רכישה:</b> מס המוטל על הקונה בעת רכישת זכות במקרקעין.</li><li><b>היטל השבחה:</b> תשלום לרשות המקומית על עליית ערך המקרקעין עקב אישור תוכנית בנייה.</li></ul>",
+        questions: [
+            {
+                q: "למי משלמים 'היטל השבחה'?",
+                options: ["לרשות המיסים (מדינה)", "לוועדה המקומית לתכנון ובנייה", "למתווך", "לבנק"],
+                correct: 1,
+                exp: "היטל השבחה הוא תשלום לעירייה/וועדה מקומית על עליית ערך הקרקע."
+            }
+        ]
+    },
+    {
+        title: "9. ת
