@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>מתווך-PRO | הכנה לבחינה</title>
+    <title>מתווך-PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; }
         .hidden { display: none !important; }
-        .active { color: #2563eb !important; border-top: 3px solid #2563eb; }
+        .active-nav { color: #2563eb !important; border-top: 3px solid #2563eb; }
     </style>
 </head>
-<body class="flex flex-col h-screen overflow-hidden">
+<body class="flex flex-col h-screen">
 
-    <header class="bg-white border-b p-4 flex justify-between items-center shadow-sm z-10">
+    <header class="bg-white border-b p-4 flex justify-between items-center shadow-sm">
         <h1 class="text-xl font-black text-blue-600">מתווך<span class="text-slate-800">PRO</span></h1>
         <div id="progress-tag" class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-bold">טוען...</div>
     </header>
@@ -22,70 +22,65 @@
     <main id="main-content" class="flex-1 overflow-y-auto p-4 pb-24">
         
         <div id="screen-home" class="space-y-6">
-            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white shadow-lg">
-                <h2 class="text-2xl font-extrabold mb-2">מוכן למבחן המתווכים?</h2>
-                <p class="opacity-90">כל החומר הנדרש, סיכומי חוקים ותרגול סימולציות במקום אחד.</p>
+            <div class="bg-blue-600 rounded-3xl p-6 text-white shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">ברוך הבא</h2>
+                <p class="text-sm opacity-90">בחר באפשרות הרצויה כדי להתחיל</p>
             </div>
 
-            <div class="grid gap-4">
+            <div class="flex flex-col gap-4">
                 <button onclick="showTab('lessons')" class="w-full bg-white border-2 border-blue-100 p-6 rounded-2xl shadow-sm flex items-center gap-4 active:scale-95 transition-all">
-                    <div class="bg-blue-100 p-3 rounded-xl text-2xl">📚</div>
+                    <span class="text-3xl">📚</span>
                     <div class="text-right">
-                        <div class="font-bold text-slate-800 text-lg">לימוד לפי פרקים</div>
-                        <div class="text-sm text-slate-500">סיכומי חוקים ושאלות חזרה</div>
+                        <div class="font-bold text-slate-800">שיעורי לימוד</div>
+                        <div class="text-xs text-slate-500">למידה לפי נושאי הבחינה</div>
                     </div>
                 </button>
 
-                <button onclick="showTab('exams')" class="w-full bg-white border-2 border-indigo-100 p-6 rounded-2xl shadow-sm flex items-center gap-4 active:scale-95 transition-all">
-                    <div class="bg-indigo-100 p-3 rounded-xl text-2xl">📝</div>
+                <button onclick="showTab('exams')" class="w-full bg-white border-2 border-slate-100 p-6 rounded-2xl shadow-sm flex items-center gap-4 active:scale-95 transition-all">
+                    <span class="text-3xl">📝</span>
                     <div class="text-right">
-                        <div class="font-bold text-slate-800 text-lg">מבחן סימולציה</div>
-                        <div class="text-sm text-slate-500">25 שאלות מכל הנושאים</div>
+                        <div class="font-bold text-slate-800">מבחן סימולציה</div>
+                        <div class="text-xs text-slate-500">תרגול שאלות מכל הפרקים</div>
                     </div>
                 </button>
             </div>
-            <div id="error-log" class="text-red-500 text-xs text-center font-mono"></div>
+            <div id="error-log" class="text-red-500 text-center text-xs mt-4"></div>
         </div>
 
-        <div id="screen-lessons-list" class="hidden space-y-4">
-            <h3 class="text-xl font-bold text-slate-800 mb-4">פרקי הלימוד</h3>
-            <div id="lessons-grid" class="grid gap-3"></div>
+        <div id="screen-lessons-list" class="hidden">
+            <h3 class="text-lg font-bold mb-4">בחר פרק ללמידה:</h3>
+            <div id="lessons-grid" class="space-y-3"></div>
         </div>
 
-        <div id="screen-study" class="hidden space-y-4 pb-10">
-            <button onclick="showTab('lessons')" class="text-blue-600 font-bold mb-4">← חזרה לרשימה</button>
-            <article id="lesson-body" class="prose prose-slate bg-white p-6 rounded-2xl shadow-sm border border-slate-100 min-h-[300px]"></article>
-            <button onclick="startChapterQuiz()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold shadow-lg">תרגל שאלות מפרק זה</button>
+        <div id="screen-study" class="hidden">
+            <button onclick="showTab('lessons')" class="text-blue-600 mb-4 font-bold">← חזרה</button>
+            <div id="lesson-body" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6"></div>
+            <button onclick="startChapterQuiz()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold">תרגל שאלות מהפרק</button>
         </div>
 
         <div id="screen-quiz" class="hidden space-y-4">
-            <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm">
-                <span id="counter" class="font-bold text-slate-500">1/25</span>
-                <span id="timer" class="font-mono font-bold text-red-500 bg-red-50 px-3 py-1 rounded-lg">60:00</span>
+            <div class="flex justify-between items-center">
+                <span id="counter" class="font-bold text-slate-400"></span>
+                <span id="timer" class="bg-red-50 text-red-600 px-3 py-1 rounded-lg font-mono"></span>
             </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-blue-50">
-                <p id="q-text" class="text-lg font-bold text-slate-800 leading-relaxed"></p>
-            </div>
-            <div id="options" class="grid gap-3"></div>
-            <div id="explanation" class="hidden bg-amber-50 border-r-4 border-amber-400 p-4 rounded-lg">
-                <p id="exp-text" class="text-sm text-amber-800"></p>
-                <button onclick="nextQuestion()" class="mt-4 w-full bg-slate-800 text-white p-3 rounded-lg font-bold">המשך לשאלה הבאה</button>
+            <div id="q-text" class="bg-white p-6 rounded-2xl shadow-sm font-bold text-lg"></div>
+            <div id="options" class="flex flex-col gap-3"></div>
+            <div id="explanation" class="hidden p-4 bg-amber-50 rounded-xl border-r-4 border-amber-400">
+                <p id="exp-text" class="text-sm"></p>
+                <button onclick="nextQuestion()" class="mt-4 w-full bg-slate-800 text-white p-3 rounded-lg">המשך</button>
             </div>
         </div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-2 pb-6 shadow-2xl z-20">
-        <button id="nav-home" onclick="showTab('home')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 transition-all">
-            <span class="text-xl">🏠</span>
-            <span class="text-[10px] font-bold">בית</span>
+    <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 pb-6">
+        <button id="nav-home" onclick="showTab('home')" class="nav-btn flex flex-col items-center text-slate-400">
+            <span>🏠</span><span class="text-[10px]">בית</span>
         </button>
-        <button id="nav-lessons" onclick="showTab('lessons')" class="nav-btn flex flex-col items-center gap-1 text-slate-400">
-            <span class="text-xl">📚</span>
-            <span class="text-[10px] font-bold">לימוד</span>
+        <button id="nav-lessons" onclick="showTab('lessons')" class="nav-btn flex flex-col items-center text-slate-400">
+            <span>📚</span><span class="text-[10px]">לימוד</span>
         </button>
-        <button id="nav-exams" onclick="showTab('exams')" class="nav-btn flex flex-col items-center gap-1 text-slate-400">
-            <span class="text-xl">📝</span>
-            <span class="text-[10px] font-bold">מבחן</span>
+        <button id="nav-exams" onclick="showTab('exams')" class="nav-btn flex flex-col items-center text-slate-400">
+            <span>📝</span><span class="text-[10px]">מבחן</span>
         </button>
     </nav>
 
