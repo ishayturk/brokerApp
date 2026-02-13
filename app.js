@@ -1,173 +1,156 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>מתווך-PRO | גרסה מלאה</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap');
+// FILE_NAME: app.js
+// CREATED_AT: 2026-02-13 10:30
+// VERSION: 2.1.0
+
+let lessonsData = [];
+let currentQuiz = [];
+let quizIdx = 0;
+let score = 0;
+let timerInterval;
+// שמירת התקדמות בגרסה 2
+let completedLessons = JSON.parse(localStorage.getItem('broker_completed_v2')) || [];
+
+// פונקציית טעינה רובסטית - טוענת אינדקס ואז את כל השיעורים
+async function loadData() {
+    try {
+        const tag = document.getElementById('progress-tag');
         
-        body { 
-            font-family: 'Assistant', sans-serif; 
-            background-color: #f8fafc; 
-            height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            margin: 0;
-        }
-
-        .content-area { 
-            flex: 1; 
-            overflow-y: auto; 
-            padding: 20px; 
-            padding-bottom: 100px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* ניווט תחתון */
-        .nav-bar { 
-            height: 75px; 
-            background: white; 
-            border-top: 1px solid #e2e8f0; 
-            display: flex; 
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-            z-index: 50; 
-        }
-
-        .nav-btn { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            color: #94a3b8; 
-            font-size: 0.85rem; 
-            font-weight: 700; 
-            border: none; 
-            background: none; 
-            cursor: pointer;
-        }
-
-        .nav-btn.active { color: #2563eb; }
-
-        /* עיצוב תוכן השיעור */
-        .lesson-content h2 { font-size: 1.7rem; font-weight: 800; color: #1e40af; margin-bottom: 1rem; border-right: 4px solid #2563eb; padding-right: 15px; }
-        .lesson-content h3 { font-size: 1.3rem; font-weight: 700; color: #334155; margin-top: 1.5rem; }
-        .lesson-content p { color: #475569; line-height: 1.7; margin-bottom: 1rem; font-size: 1.1rem; }
-        .lesson-content ul { padding-right: 20px; margin-bottom: 1rem; list-style-type: disc; }
-        .lesson-content li { margin-bottom: 8px; color: #475569; }
-
-        .important-box { 
-            background: #fff7ed; 
-            border-right: 5px solid #f97316; 
-            padding: 20px; 
-            border-radius: 15px; 
-            margin: 20px 0; 
-            color: #9a3412; 
-            font-weight: 600; 
-        }
-
-        .hidden { display: none !important; }
-
-        /* כרטיס תפריט */
-        .menu-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            width: 100%;
-            max-width: 320px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #e2e8f0;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .menu-card:active { transform: scale(0.97); }
-    </style>
-</head>
-<body>
-
-    <main class="content-area" id="main-content">
+        // 1. טעינת רשימת הקבצים
+        const response = await fetch(`index.json?v=${new Date().getTime()}`);
+        const indexData = await response.json();
         
-        <div id="screen-home" class="flex flex-col items-center justify-center min-h-full text-center w-full">
-            <div class="bg-blue-600 w-20 h-20 rounded-3xl flex items-center justify-center shadow-xl mb-6 shadow-blue-200">
-                <span class="text-4xl text-white">🏠</span>
-            </div>
-            <h1 class="text-3xl font-black text-slate-800 mb-2">מתווך-PRO</h1>
-            <p class="text-slate-500 mb-10 px-10">הכנה מקיפה לבחינת רשם המתווכים</p>
-            
-            <div class="flex flex-col gap-4 w-full items-center">
-                <div onclick="showTab('lessons')" class="menu-card border-r-4 border-r-blue-600">
-                    <div class="text-right">
-                        <span class="block text-lg font-bold text-slate-800">שיעורי לימוד</span>
-                        <span id="progress-tag" class="text-xs text-blue-500 font-bold">טוען נתונים...</span>
+        // 2. טעינת כל שיעור בנפרד למניעת קריסה כללית
+        const promises = indexData.map(item => 
+            fetch(`${item.file}?v=${new Date().getTime()}`).then(r => {
+                if (!r.ok) throw new Error(`Missing: ${item.file}`);
+                return r.json();
+            })
+        );
+        
+        lessonsData = await Promise.all(promises);
+        updateHomeProgress();
+    } catch (e) {
+        console.error("שגיאה בטעינה:", e);
+        if(document.getElementById('progress-tag')) {
+            document.getElementById('progress-tag').textContent = "שגיאת נתונים";
+        }
+    }
+}
+
+function updateHomeProgress() {
+    const tag = document.getElementById('progress-tag');
+    if(tag && lessonsData.length > 0) {
+        tag.textContent = `${completedLessons.length} מתוך ${lessonsData.length} הושלמו`;
+    }
+}
+
+function showTab(tab) {
+    clearInterval(timerInterval);
+    document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    let target = 'screen-home';
+    if(tab === 'lessons') target = 'screen-lessons-list';
+    if(tab === 'exams') target = 'screen-quiz';
+    
+    document.getElementById(target).classList.remove('hidden');
+    document.getElementById(`nav-${tab}`).classList.add('active');
+
+    if(tab === 'lessons') renderLessonsList();
+    if(tab === 'exams') startFullExam();
+    document.getElementById('main-content').scrollTop = 0;
+}
+
+function renderLessonsList() {
+    const grid = document.getElementById('lessons-grid');
+    if(!grid) return;
+    grid.innerHTML = lessonsData.map((l, i) => {
+        const isDone = completedLessons.includes(i);
+        return `
+            <div onclick="openLesson(${i})" class="bg-white p-5 rounded-2xl border-2 ${isDone ? 'border-green-200 bg-green-50' : 'border-transparent'} shadow-sm flex justify-between items-center cursor-pointer active:scale-95 transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl ${isDone ? 'bg-green-500 text-white' : 'bg-blue-100 text-blue-600'} flex items-center justify-center font-black">
+                        ${isDone ? '✓' : i + 1}
                     </div>
-                    <span class="text-3xl">📖</span>
+                    <span class="font-bold text-slate-700">${l.title}</span>
                 </div>
-
-                <div onclick="showTab('exams')" class="menu-card border-r-4 border-r-amber-500">
-                    <div class="text-right">
-                        <span class="block text-lg font-bold text-slate-800">סימולציית בחינה</span>
-                        <span class="text-[11px] text-slate-400">25 שאלות רנדומליות</span>
-                    </div>
-                    <span class="text-3xl">⏱️</span>
-                </div>
+                <span class="text-slate-300">←</span>
             </div>
-        </div>
+        `;
+    }).join('');
+}
 
-        <div id="screen-lessons-list" class="hidden w-full max-w-sm">
-            <h2 class="text-2xl font-black mb-6 text-slate-800 text-center">תכנית הלימודים</h2>
-            <div id="lessons-grid" class="space-y-4"></div>
-        </div>
+function openLesson(i) {
+    document.getElementById('screen-lessons-list').classList.add('hidden');
+    const s = document.getElementById('screen-study');
+    s.classList.remove('hidden');
+    document.getElementById('lesson-body').innerHTML = lessonsData[i].content;
+    s.dataset.idx = i;
+    
+    if(!completedLessons.includes(i)) {
+        completedLessons.push(i);
+        localStorage.setItem('broker_completed_v2', JSON.stringify(completedLessons));
+        updateHomeProgress();
+    }
+    document.getElementById('main-content').scrollTop = 0;
+}
 
-        <div id="screen-study" class="hidden w-full max-w-md">
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 mb-6">
-                <div id="lesson-body" class="lesson-content"></div>
-                <div class="mt-8 pt-6 border-t border-slate-100">
-                    <button onclick="startChapterQuiz()" class="w-full bg-blue-600 text-white p-5 rounded-2xl font-black shadow-lg mb-4">תרגול שאלות הפרק ✍️</button>
-                    <button onclick="showTab('lessons')" class="w-full text-slate-400 font-bold py-2">חזרה לרשימה</button>
-                </div>
-            </div>
-        </div>
+function startChapterQuiz() {
+    const idx = document.getElementById('screen-study').dataset.idx;
+    currentQuiz = [...lessonsData[idx].questions];
+    initQuiz(600);
+}
 
-        <div id="screen-quiz" class="hidden w-full max-w-sm flex flex-col min-h-full">
-            <div class="flex justify-between items-center mb-6">
-                <div id="timer" class="text-red-600 font-black bg-red-50 px-4 py-2 rounded-2xl tabular-nums border border-red-100">00:00</div>
-                <div id="counter" class="text-slate-400 font-black text-xl"></div>
-            </div>
-            <div id="question-box" class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-50 flex-grow relative">
-                <h3 id="q-text" class="text-xl font-bold mb-8 text-slate-800 leading-tight"></h3>
-                <div id="options" class="space-y-4"></div>
-                
-                <div id="explanation" class="mt-8 p-6 bg-blue-50 border-r-4 border-blue-500 rounded-2xl hidden">
-                    <p id="exp-text" class="text-slate-700 font-medium leading-relaxed"></p>
-                    <button onclick="nextQuestion()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black mt-6 shadow-md">המשך ←</button>
-                </div>
-            </div>
-        </div>
+function startFullExam() {
+    let allQ = [];
+    lessonsData.forEach(l => { if(l.questions) allQ = [...allQ, ...l.questions]; });
+    currentQuiz = allQ.sort(() => 0.5 - Math.random()).slice(0, 25);
+    initQuiz(3600);
+}
 
-    </main>
+function initQuiz(sec) {
+    quizIdx = 0; score = 0;
+    document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
+    document.getElementById('screen-quiz').classList.remove('hidden');
+    
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        let m = Math.floor(sec/60), s = sec%60;
+        document.getElementById('timer').textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+        if(--sec < 0) { clearInterval(timerInterval); alert("תם הזמן!"); showTab('home'); }
+    }, 1000);
+    renderQuestion();
+}
 
-    <nav class="nav-bar">
-        <button onclick="showTab('home')" class="nav-btn" id="nav-home">
-            <span class="text-xl">🏠</span><span class="mt-1">ראשי</span>
-        </button>
-        <button onclick="showTab('lessons')" class="nav-btn" id="nav-lessons">
-            <span class="text-xl">📖</span><span class="mt-1">לימוד</span>
-        </button>
-        <button onclick="showTab('exams')" class="nav-btn" id="nav-exams">
-            <span class="text-xl">📝</span><span class="mt-1">בחינה</span>
-        </button>
-    </nav>
+function renderQuestion() {
+    const q = currentQuiz[quizIdx];
+    document.getElementById('counter').textContent = `${quizIdx + 1}/${currentQuiz.length}`;
+    document.getElementById('q-text').textContent = q.q;
+    document.getElementById('explanation').classList.add('hidden');
+    document.getElementById('options').innerHTML = q.options.map((opt, i) => `
+        <button onclick="checkAns(${i})" class="w-full text-right p-5 border-2 border-slate-100 rounded-2xl font-bold bg-slate-50 active:bg-blue-100 transition-all">${opt}</button>
+    `).join('');
+}
 
-    <script src="app.js"></script>
-</body>
-</html>
+function checkAns(i) {
+    if(!document.getElementById('explanation').classList.contains('hidden')) return;
+    const q = currentQuiz[quizIdx];
+    const btns = document.getElementById('options').children;
+    if(i === q.correct) {
+        btns[i].classList.add('border-green-500', 'bg-green-50', 'text-green-700');
+        score++;
+    } else {
+        btns[i].classList.add('border-red-500', 'bg-red-50', 'text-red-700');
+        btns[q.correct].classList.add('border-green-500', 'bg-green-50');
+    }
+    document.getElementById('exp-text').textContent = q.exp;
+    document.getElementById('explanation').classList.remove('hidden');
+}
+
+function nextQuestion() {
+    if(++quizIdx < currentQuiz.length) renderQuestion();
+    else { clearInterval(timerInterval); alert(`סיום! ציון: ${Math.round(score/currentQuiz.length*100)}`); showTab('home'); }
+}
+
+loadData();
+showTab('home');
