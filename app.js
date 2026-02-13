@@ -1,4 +1,4 @@
-// FILE_NAME: app.js | VERSION: 2.6.0 (Force Parse)
+// FILE_NAME: app.js | VERSION: 2.7.0
 let lessonsData = [];
 let currentQuiz = [];
 let quizIdx = 0;
@@ -7,23 +7,14 @@ let timerInterval;
 let completedLessons = JSON.parse(localStorage.getItem('broker_completed_v2')) || [];
 
 async function loadData() {
-    const log = document.getElementById('error-log');
-    const tag = document.getElementById('progress-tag');
+    const errorEl = document.getElementById('error-log');
     try {
-        const response = await fetch(`./index.json?v=${Date.now()}`);
-        if (!response.ok) throw new Error("לא נמצא קובץ index.json");
+        const res = await fetch('./index.json?v=' + Date.now());
+        if (!res.ok) throw new Error("לא נמצא קובץ index.json");
         
-        let rawData = await response.text(); // קורא כטקסט גולמי
-        let indexData;
-        
-        try {
-            indexData = JSON.parse(rawData); // הופך לאובייקט JS
-        } catch (e) {
-            throw new Error("קובץ index.json אינו בפורמט JSON תקין");
-        }
-        
-        // וידוי שהנתונים הם מערך (Array)
-        let list = Array.isArray(indexData) ? indexData : (indexData.lessons || []);
+        const data = await res.json();
+        // וידוי שהנתונים הם רשימה
+        const list = Array.isArray(data) ? data : (data.lessons || []);
         
         if (list.length === 0) throw new Error("רשימת השיעורים ריקה");
 
@@ -32,11 +23,10 @@ async function loadData() {
         );
         
         lessonsData = await Promise.all(promises);
-        renderLessonsList();
-        if(tag) tag.textContent = `${completedLessons.length} מתוך ${lessonsData.length} הושלמו`;
+        document.getElementById('progress-tag').textContent = `${completedLessons.length} מתוך ${lessonsData.length} הושלמו`;
     } catch (e) {
         console.error(e);
-        if(log) log.textContent = "שגיאה: " + e.message;
+        if(errorEl) errorEl.textContent = "שגיאה בטעינה: " + e.message;
     }
 }
 
@@ -45,15 +35,15 @@ function showTab(tab) {
     document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
     let target = tab === 'lessons' ? 'screen-lessons-list' : (tab === 'exams' ? 'screen-quiz' : 'screen-home');
     document.getElementById(target).classList.remove('hidden');
-    if(tab === 'lessons') renderLessonsList();
+    if(tab === 'lessons') renderLessons();
     if(tab === 'exams') startFullExam();
 }
 
-function renderLessonsList() {
+function renderLessons() {
     const grid = document.getElementById('lessons-grid');
     if(!grid || lessonsData.length === 0) return;
     grid.innerHTML = lessonsData.map((l, i) => `
-        <div onclick="openLesson(${i})" class="bg-white p-5 rounded-xl border shadow-sm mb-2 flex justify-between items-center cursor-pointer">
+        <div onclick="openLesson(${i})" class="bg-white p-4 rounded-xl shadow-sm border mb-2 flex justify-between items-center">
             <span class="font-bold">${l.title}</span>
             <span>${completedLessons.includes(i) ? '✅' : '⬅️'}</span>
         </div>
@@ -61,7 +51,7 @@ function renderLessonsList() {
 }
 
 function openLesson(i) {
-    document.getElementById('screen-lessons-list').classList.add('hidden');
+    document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
     const s = document.getElementById('screen-study');
     s.classList.remove('hidden');
     s.dataset.idx = i;
@@ -75,17 +65,17 @@ function openLesson(i) {
 function startChapterQuiz() {
     const idx = document.getElementById('screen-study').dataset.idx;
     currentQuiz = [...lessonsData[idx].questions];
-    initQuiz(600);
+    initQuiz();
 }
 
 function startFullExam() {
     let allQ = [];
     lessonsData.forEach(l => { if(l.questions) allQ = [...allQ, ...l.questions]; });
     currentQuiz = allQ.sort(() => 0.5 - Math.random()).slice(0, 25);
-    initQuiz(3600);
+    initQuiz();
 }
 
-function initQuiz(sec) {
+function initQuiz() {
     quizIdx = 0; score = 0;
     document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
     document.getElementById('screen-quiz').classList.remove('hidden');
@@ -98,11 +88,12 @@ function renderQuestion() {
     document.getElementById('q-text').textContent = q.q;
     document.getElementById('explanation').classList.add('hidden');
     document.getElementById('options').innerHTML = q.options.map((opt, i) => `
-        <button onclick="checkAns(${i})" class="w-full text-right p-4 border rounded-xl mb-2 bg-slate-50">${opt}</button>
+        <button onclick="checkAns(${i})" class="w-full text-right p-4 border rounded-xl mb-2 bg-slate-50 font-bold">${opt}</button>
     `).join('');
 }
 
 function checkAns(i) {
+    if(!document.getElementById('explanation').classList.contains('hidden')) return;
     const q = currentQuiz[quizIdx];
     if(i === q.correct) score++;
     document.getElementById('exp-text').textContent = q.exp;
@@ -111,7 +102,7 @@ function checkAns(i) {
 
 function nextQuestion() {
     if(++quizIdx < currentQuiz.length) renderQuestion();
-    else { alert(`ציון: ${Math.round(score/currentQuiz.length*100)}`); showTab('home'); }
+    else { alert(`סיימת! ציון: ${Math.round(score/currentQuiz.length*100)}`); showTab('home'); }
 }
 
 loadData();
