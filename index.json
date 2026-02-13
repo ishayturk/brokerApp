@@ -1,0 +1,15 @@
+{
+  "info": "FILE_NAME: index.json | CREATED_AT: 2026-02-13 11:00 | VERSION: 2.1.0",
+  "lessons": [
+    {
+      "id": 1,
+      "title": "1. רישוי ואגרות",
+      "file": "lesson1.json"
+    },
+    {
+      "id": 2,
+      "title": "2. דרישת הכתב והזמנה",
+      "file": "lesson2.json"
+    }
+  ]
+}
