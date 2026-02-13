@@ -1,104 +1,75 @@
-const internalLessons = [
-    {
-        title: "1. רישוי ואגרות",
-        content: "<h2>חוק המתווכים - רישוי</h2><p>כדי לעסוק בתיווך חובה להחזיק ברישיון. התנאים: גיל 18, אזרח/תושב, ללא עבר פלילי ב-5 שנים האחרונות.</p>",
-        questions: [{ q: "מהו גיל המינימום לרישיון?", options: ["16", "18", "21", "אין הגבלה"], correct: 1, exp: "לפי החוק גיל המינימום הוא 18." }]
-    },
-    {
-        title: "2. דרישת הכתב",
-        content: "<h2>הזמנה בכתב</h2><p>חובה לחתום על הזמנת תיווך בכתב הכוללת שמות, מחיר, ונכס.</p>",
-        questions: [{ q: "האם הסכם בעל פה מזכה בדמי תיווך?", options: ["כן", "רק אם יש עדים", "לא, חובה הסכם בכתב", "רק מעל מיליון ש\"ח"], correct: 2, exp: "סעיף 9 קובע חובת כתב לזכאות." }]
-    },
-    {
-        title: "3. בלעדיות",
-        content: "<h2>בלעדיות</h2><p>מוגבלת ל-6 חודשים בדירה ומחייבת 2 פעולות שיווק.</p>",
-        questions: [{ q: "מה משך הבלעדיות המקסימלי לדירה?", options: ["3 חודשים", "6 חודשים", "שנה", "חודש"], correct: 1, exp: "החוק מגביל ל-6 חודשים בדירת מגורים." }]
-    }
-];
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>מתווך-PRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: system-ui, sans-serif; background-color: #f1f5f9; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        #main-content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 90px; }
+        .hidden { display: none !important; }
+        nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 75px; 
+            background: white; display: flex; border-top: 2px solid #e2e8f0; 
+            z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.1); 
+        }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border: none; background: none; color: #64748b; font-weight: bold; font-size: 13px; }
+        .nav-btn.active { color: #2563eb; }
+    </style>
+</head>
+<body>
 
-let currentQuiz = [];
-let quizIdx = 0;
-let score = 0;
-let completedLessons = JSON.parse(localStorage.getItem('broker_v5')) || [];
+    <header class="bg-white p-4 text-center shadow-sm font-bold text-blue-600 border-b">מתווך-PRO</header>
 
-function showTab(tab) {
-    document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
-    let target = 'screen-home';
-    if(tab === 'lessons') target = 'screen-lessons-list';
-    if(tab === 'exams') target = 'screen-quiz';
-    if(tab === 'study') target = 'screen-study';
-    
-    document.getElementById(target).classList.remove('hidden');
-    if(tab === 'lessons') renderLessons();
-    if(tab === 'exams') startFullExam();
-}
+    <main id="main-content">
+        <div id="screen-home" class="flex flex-col gap-4">
+            <div class="bg-blue-600 p-6 rounded-2xl text-white">
+                <h2 class="text-xl font-bold">הכנה למבחן המתווכים</h2>
+                <div id="progress-tag" class="text-sm opacity-80">0 מתוך 10 הושלמו</div>
+            </div>
+            
+            <button onclick="showTab('lessons')" class="w-full bg-white p-6 rounded-2xl border-2 border-blue-500 shadow-sm flex items-center gap-4 active:scale-95 transition-all">
+                <span style="font-size:30px">📚</span>
+                <div class="text-right"><div class="font-bold text-lg">שיעורי לימוד</div></div>
+            </button>
 
-function renderLessons() {
-    const grid = document.getElementById('lessons-grid');
-    grid.innerHTML = internalLessons.map((l, i) => `
-        <div onclick="openLesson(${i})" class="bg-white p-4 rounded-xl border-2 border-slate-100 shadow-sm flex justify-between items-center cursor-pointer">
-            <span class="font-bold">${l.title}</span>
-            <span>${completedLessons.includes(i) ? '✅' : '⬅️'}</span>
+            <button onclick="showTab('exams')" class="w-full bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm flex items-center gap-4 active:scale-95 transition-all">
+                <span style="font-size:30px">📝</span>
+                <div class="text-right"><div class="font-bold text-lg">מבחן סימולציה</div></div>
+            </button>
         </div>
-    `).join('');
-}
 
-function openLesson(i) {
-    showTab('study');
-    const s = document.getElementById('screen-study');
-    s.dataset.idx = i;
-    document.getElementById('lesson-body').innerHTML = internalLessons[i].content;
-}
+        <div id="screen-lessons-list" class="hidden">
+            <h3 class="font-bold text-lg mb-4">בחר פרק:</h3>
+            <div id="lessons-grid" class="space-y-3"></div>
+        </div>
 
-function startChapterQuiz() {
-    const idx = document.getElementById('screen-study').dataset.idx;
-    currentQuiz = [...internalLessons[idx].questions];
-    initQuiz();
-}
+        <div id="screen-study" class="hidden">
+            <button onclick="showTab('lessons')" class="text-blue-600 font-bold mb-4">← חזרה</button>
+            <div id="lesson-body" class="bg-white p-5 rounded-2xl shadow-sm mb-4"></div>
+            <button onclick="startChapterQuiz()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold">תרגל שאלות</button>
+        </div>
 
-function startFullExam() {
-    let allQ = [];
-    internalLessons.forEach(l => { allQ = [...allQ, ...l.questions]; });
-    currentQuiz = allQ.sort(() => 0.5 - Math.random());
-    initQuiz();
-}
+        <div id="screen-quiz" class="hidden space-y-4">
+            <div class="flex justify-between bg-white p-3 rounded-xl shadow-sm font-bold">
+                <span id="counter"></span><span id="timer" class="text-red-500">סימולציה</span>
+            </div>
+            <div id="q-text" class="bg-white p-6 rounded-2xl shadow-sm font-bold text-lg"></div>
+            <div id="options" class="flex flex-col gap-3"></div>
+            <div id="explanation" class="hidden p-4 bg-amber-50 border-r-4 border-amber-400 rounded-xl text-sm italic">
+                <p id="exp-text"></p>
+                <button onclick="nextQuestion()" class="mt-4 w-full bg-black text-white p-3 rounded-lg">המשך</button>
+            </div>
+        </div>
+    </main>
 
-function initQuiz() {
-    quizIdx = 0; score = 0;
-    document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
-    document.getElementById('screen-quiz').classList.remove('hidden');
-    renderQuestion();
-}
+    <nav>
+        <button onclick="showTab('home')" class="nav-btn"><span>🏠</span><span>בית</span></button>
+        <button onclick="showTab('lessons')" class="nav-btn"><span>📚</span><span>לימוד</span></button>
+        <button onclick="showTab('exams')" class="nav-btn"><span>📝</span><span>מבחן</span></button>
+    </nav>
 
-function renderQuestion() {
-    const q = currentQuiz[quizIdx];
-    document.getElementById('counter').textContent = `${quizIdx + 1}/${currentQuiz.length}`;
-    document.getElementById('q-text').textContent = q.q;
-    document.getElementById('explanation').classList.add('hidden');
-    document.getElementById('options').innerHTML = q.options.map((opt, i) => `
-        <button onclick="checkAns(${i})" class="w-full text-right p-4 border rounded-xl bg-slate-50 font-bold">${opt}</button>
-    `).join('');
-}
-
-function checkAns(i) {
-    if(!document.getElementById('explanation').classList.contains('hidden')) return;
-    const q = currentQuiz[quizIdx];
-    if(i === q.correct) score++;
-    document.getElementById('exp-text').textContent = q.exp;
-    document.getElementById('explanation').classList.remove('hidden');
-}
-
-function nextQuestion() {
-    if(++quizIdx < currentQuiz.length) renderQuestion();
-    else { alert(`ציון: ${Math.round(score/currentQuiz.length*100)}`); showTab('home'); }
-}
-
-// חשיפת פונקציות לעולם החיצון (לחלון)
-window.showTab = showTab;
-window.openLesson = openLesson;
-window.startChapterQuiz = startChapterQuiz;
-window.checkAns = checkAns;
-window.nextQuestion = nextQuestion;
-
-// הפעלה ראשונית
-showTab('home');
+    <script src="app.js"></script>
+</body>
+</html>
