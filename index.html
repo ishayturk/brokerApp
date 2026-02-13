@@ -6,50 +6,55 @@
     <title>מתווך-PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: sans-serif; background-color: #f3f4f6; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background-color: #f3f4f6; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        main { flex: 1; overflow-y: auto; padding-bottom: 80px; }
         .hidden { display: none !important; }
-        nav button { flex: 1; padding: 10px; font-weight: bold; }
+        nav { height: 70px; background: white; border-top: 2px solid #e2e8f0; display: flex; justify-content: space-around; align-items: center; position: fixed; bottom: 0; width: 100%; z-index: 100; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; font-size: 12px; font-weight: bold; color: #64748b; border: none; background: none; cursor: pointer; }
     </style>
 </head>
-<body class="h-screen flex flex-col">
-    <header class="bg-white p-4 shadow-sm text-center text-blue-600 font-bold border-b">מתווך-PRO</header>
+<body>
+    <header class="bg-white p-4 shadow text-center font-bold text-blue-600">מתווך-PRO</header>
     
-    <main id="main-content" class="flex-1 overflow-y-auto p-4 pb-24">
+    <main id="main-content" class="p-4">
         <div id="screen-home" class="space-y-4">
-            <button onclick="showTab('lessons')" class="w-full bg-blue-600 text-white p-6 rounded-xl shadow-lg font-bold text-xl">📚 שיעורי לימוד</button>
-            <button onclick="showTab('exams')" class="w-full bg-white border-2 border-blue-600 text-blue-600 p-6 rounded-xl shadow-md font-bold text-xl">📝 מבחן סימולציה</button>
-            <div id="progress-tag" class="text-center text-slate-500 mt-4">טוען נתונים...</div>
-            <div id="error-log" class="text-red-500 text-center text-xs mt-2"></div>
+            <div class="bg-blue-600 p-6 rounded-2xl text-white shadow-lg">
+                <h2 class="text-xl font-bold">הכנה למבחן המתווכים</h2>
+                <div id="progress-tag" class="text-sm opacity-80 mt-1">טוען נתונים...</div>
+            </div>
+            <button onclick="showTab('lessons')" class="w-full bg-white p-5 rounded-xl shadow border-2 border-blue-500 font-bold text-lg">📚 שיעורי לימוד</button>
+            <button onclick="showTab('exams')" class="w-full bg-white p-5 rounded-xl shadow border-2 border-slate-200 font-bold text-lg">📝 מבחן סימולציה</button>
+            <p id="error-log" class="text-red-500 text-center text-xs mt-4 font-mono"></p>
         </div>
 
-        <div id="screen-lessons-list" class="hidden space-y-3">
-            <h3 class="font-bold border-b pb-2">פרקי לימוד:</h3>
+        <div id="screen-lessons-list" class="hidden">
+            <h3 class="font-bold mb-4">בחר נושא:</h3>
             <div id="lessons-grid" class="space-y-2"></div>
         </div>
 
         <div id="screen-study" class="hidden">
             <button onclick="showTab('lessons')" class="text-blue-600 font-bold mb-4">← חזרה</button>
-            <div id="lesson-body" class="bg-white p-5 rounded-xl shadow-sm mb-4"></div>
-            <button onclick="startChapterQuiz()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold">תרגל שאלות מהפרק</button>
+            <div id="lesson-body" class="bg-white p-5 rounded-xl shadow mb-4"></div>
+            <button onclick="startChapterQuiz()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold">תרגל שאלות</button>
         </div>
 
         <div id="screen-quiz" class="hidden space-y-4">
-            <div class="flex justify-between bg-white p-3 rounded-lg shadow-sm font-bold">
+            <div class="flex justify-between font-bold bg-white p-3 rounded-lg shadow-sm">
                 <span id="counter"></span><span id="timer" class="text-red-600"></span>
             </div>
-            <div id="q-text" class="bg-white p-5 rounded-xl shadow-md font-bold text-lg"></div>
-            <div id="options" class="flex flex-col gap-2"></div>
+            <div id="q-text" class="bg-white p-5 rounded-xl shadow font-bold"></div>
+            <div id="options" class="space-y-2"></div>
             <div id="explanation" class="hidden p-4 bg-yellow-50 border-r-4 border-yellow-400">
-                <p id="exp-text" class="text-sm"></p>
-                <button onclick="nextQuestion()" class="mt-4 w-full bg-slate-800 text-white p-3 rounded-lg">המשך</button>
+                <p id="exp-text" class="text-sm italic"></p>
+                <button onclick="nextQuestion()" class="mt-4 w-full bg-slate-800 text-white p-3 rounded-lg font-bold">המשך לשאלה הבאה</button>
             </div>
         </div>
     </main>
 
-    <nav class="fixed bottom-0 w-full bg-white border-t flex shadow-inner">
-        <button onclick="showTab('home')">🏠 בית</button>
-        <button onclick="showTab('lessons')">📚 לימוד</button>
-        <button onclick="showTab('exams')">📝 מבחן</button>
+    <nav>
+        <button onclick="showTab('home')" class="nav-btn"><span>🏠</span><span>בית</span></button>
+        <button onclick="showTab('lessons')" class="nav-btn"><span>📚</span><span>לימוד</span></button>
+        <button onclick="showTab('exams')" class="nav-btn"><span>📝</span><span>מבחן</span></button>
     </nav>
 
     <script src="app.js"></script>
