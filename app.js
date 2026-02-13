@@ -1,3 +1,4 @@
+// FILE_NAME: app.js | VERSION: 2.5.0 (Super Stable)
 let lessonsData = [];
 let currentQuiz = [];
 let quizIdx = 0;
@@ -5,14 +6,23 @@ let score = 0;
 let timerInterval;
 let completedLessons = JSON.parse(localStorage.getItem('broker_completed_v2')) || [];
 
-// פונקציית טעינה משופרת
 async function loadData() {
     const log = document.getElementById('error-log');
+    const tag = document.getElementById('progress-tag');
     try {
         const response = await fetch(`./index.json?v=${Date.now()}`);
         if (!response.ok) throw new Error("לא נמצא קובץ index.json");
         
-        const indexData = await response.json();
+        let indexData = await response.json();
+        
+        // תיקון לשגיאת ה-map: מוודא שאנחנו עובדים עם מערך
+        if (!Array.isArray(indexData)) {
+            if (indexData.lessons) {
+                indexData = indexData.lessons;
+            } else {
+                throw new Error("מבנה קובץ index.json לא תקין");
+            }
+        }
         
         const promises = indexData.map(item => 
             fetch(`./${item.file}?v=${Date.now()}`).then(async r => {
@@ -22,33 +32,25 @@ async function loadData() {
         );
         
         lessonsData = await Promise.all(promises);
-        updateHomeProgress();
-        console.log("המערכת מוכנה עם " + lessonsData.length + " שיעורים");
+        if(tag) tag.textContent = `${completedLessons.length} מתוך ${lessonsData.length} הושלמו`;
+        console.log("המערכת מוכנה");
     } catch (e) {
         console.error(e);
         if(log) log.textContent = "שגיאה: " + e.message;
-        const tag = document.getElementById('progress-tag');
         if(tag) tag.textContent = "שגיאת טעינה";
     }
-}
-
-function updateHomeProgress() {
-    const tag = document.getElementById('progress-tag');
-    if(tag) tag.textContent = `${completedLessons.length} מתוך ${lessonsData.length} הושלמו`;
 }
 
 function showTab(tab) {
     clearInterval(timerInterval);
     document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     
     let target = 'screen-home';
     if(tab === 'lessons') target = 'screen-lessons-list';
     if(tab === 'exams') target = 'screen-quiz';
     
-    document.getElementById(target).classList.remove('hidden');
-    const btn = document.getElementById(`nav-${tab}`);
-    if(btn) btn.classList.add('active');
+    const el = document.getElementById(target);
+    if(el) el.classList.remove('hidden');
 
     if(tab === 'lessons') renderLessonsList();
     if(tab === 'exams') startFullExam();
@@ -58,18 +60,12 @@ function showTab(tab) {
 function renderLessonsList() {
     const grid = document.getElementById('lessons-grid');
     if(!grid) return;
-    
-    if(lessonsData.length === 0) {
-        grid.innerHTML = "<p class='text-center py-10'>טוען נתונים...</p>";
-        return;
-    }
-
     grid.innerHTML = lessonsData.map((l, i) => {
         const isDone = completedLessons.includes(i);
         return `
-            <div onclick="openLesson(${i})" class="bg-white p-5 rounded-2xl border-2 ${isDone ? 'border-green-200 bg-green-50' : 'border-transparent'} shadow-sm flex justify-between items-center cursor-pointer active:scale-95">
+            <div onclick="openLesson(${i})" class="bg-white p-5 rounded-xl border-2 ${isDone ? 'border-green-200 bg-green-50' : 'border-transparent'} shadow-sm flex justify-between items-center cursor-pointer active:scale-95">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl ${isDone ? 'bg-green-500 text-white' : 'bg-blue-100 text-blue-600'} flex items-center justify-center font-black">
+                    <div class="w-10 h-10 rounded-lg ${isDone ? 'bg-green-500 text-white' : 'bg-blue-100 text-blue-600'} flex items-center justify-center font-black">
                         ${isDone ? '✓' : i + 1}
                     </div>
                     <span class="font-bold text-slate-700">${l.title}</span>
@@ -89,7 +85,8 @@ function openLesson(i) {
     if(!completedLessons.includes(i)) {
         completedLessons.push(i);
         localStorage.setItem('broker_completed_v2', JSON.stringify(completedLessons));
-        updateHomeProgress();
+        const tag = document.getElementById('progress-tag');
+        if(tag) tag.textContent = `${completedLessons.length} מתוך ${lessonsData.length} הושלמו`;
     }
     document.getElementById('main-content').scrollTop = 0;
 }
@@ -127,7 +124,7 @@ function renderQuestion() {
     document.getElementById('q-text').textContent = q.q;
     document.getElementById('explanation').classList.add('hidden');
     document.getElementById('options').innerHTML = q.options.map((opt, i) => `
-        <button onclick="checkAns(${i})" class="w-full text-right p-5 border-2 border-slate-100 rounded-2xl font-bold bg-slate-50">${opt}</button>
+        <button onclick="checkAns(${i})" class="w-full text-right p-4 border-2 border-slate-100 rounded-xl font-bold bg-slate-50">${opt}</button>
     `).join('');
 }
 
