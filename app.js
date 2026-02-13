@@ -1,32 +1,29 @@
-// FILE_NAME: app.js | VERSION: 2.7.0
 let lessonsData = [];
 let currentQuiz = [];
 let quizIdx = 0;
 let score = 0;
 let timerInterval;
-let completedLessons = JSON.parse(localStorage.getItem('broker_completed_v2')) || [];
+let completedLessons = JSON.parse(localStorage.getItem('broker_comp_v3')) || [];
 
 async function loadData() {
     const errorEl = document.getElementById('error-log');
     try {
         const res = await fetch('./index.json?v=' + Date.now());
-        if (!res.ok) throw new Error("לא נמצא קובץ index.json");
+        if (!res.ok) throw new Error("Could not find index.json");
+        const list = await res.json();
         
-        const data = await res.json();
-        // וידוי שהנתונים הם רשימה
-        const list = Array.isArray(data) ? data : (data.lessons || []);
-        
-        if (list.length === 0) throw new Error("רשימת השיעורים ריקה");
-
         const promises = list.map(item => 
-            fetch(`./${item.file}?v=${Date.now()}`).then(r => r.json())
+            fetch(`./${item.file}?v=${Date.now()}`)
+                .then(r => r.ok ? r.json() : null)
+                .catch(e => { console.error("Error loading " + item.file); return null; })
         );
         
-        lessonsData = await Promise.all(promises);
+        const results = await Promise.all(promises);
+        lessonsData = results.filter(r => r !== null);
+        
         document.getElementById('progress-tag').textContent = `${completedLessons.length} מתוך ${lessonsData.length} הושלמו`;
     } catch (e) {
-        console.error(e);
-        if(errorEl) errorEl.textContent = "שגיאה בטעינה: " + e.message;
+        if(errorEl) errorEl.textContent = "שגיאת טעינה: " + e.message;
     }
 }
 
@@ -41,10 +38,9 @@ function showTab(tab) {
 
 function renderLessons() {
     const grid = document.getElementById('lessons-grid');
-    if(!grid || lessonsData.length === 0) return;
     grid.innerHTML = lessonsData.map((l, i) => `
-        <div onclick="openLesson(${i})" class="bg-white p-4 rounded-xl shadow-sm border mb-2 flex justify-between items-center">
-            <span class="font-bold">${l.title}</span>
+        <div onclick="openLesson(${i})" class="bg-white p-4 rounded-xl border-2 border-transparent shadow-sm flex justify-between items-center cursor-pointer active:bg-blue-50">
+            <span class="font-bold text-slate-700">${l.title}</span>
             <span>${completedLessons.includes(i) ? '✅' : '⬅️'}</span>
         </div>
     `).join('');
@@ -58,7 +54,7 @@ function openLesson(i) {
     document.getElementById('lesson-body').innerHTML = lessonsData[i].content;
     if(!completedLessons.includes(i)) {
         completedLessons.push(i);
-        localStorage.setItem('broker_completed_v2', JSON.stringify(completedLessons));
+        localStorage.setItem('broker_comp_v3', JSON.stringify(completedLessons));
     }
 }
 
@@ -88,7 +84,7 @@ function renderQuestion() {
     document.getElementById('q-text').textContent = q.q;
     document.getElementById('explanation').classList.add('hidden');
     document.getElementById('options').innerHTML = q.options.map((opt, i) => `
-        <button onclick="checkAns(${i})" class="w-full text-right p-4 border rounded-xl mb-2 bg-slate-50 font-bold">${opt}</button>
+        <button onclick="checkAns(${i})" class="w-full text-right p-4 border rounded-xl bg-slate-50 font-bold active:bg-blue-100">${opt}</button>
     `).join('');
 }
 
