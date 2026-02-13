@@ -1,0 +1,32 @@
+{
+  "project_name": "מתווך-PRO",
+  "last_full_update": "2026-02-13 17:15",
+  "system_version": "2.3.0",
+  "files_inventory": [
+    {
+      "file": "index.html",
+      "version": "2.1.0",
+      "created": "2026-02-13 09:40",
+      "description": "שלד האפליקציה ועיצוב"
+    },
+    {
+      "file": "app.js",
+      "version": "2.1.0",
+      "created": "2026-02-13 10:30",
+      "description": "לוגיקה, טעינה חכמה וניהול בחינות"
+    },
+    {
+      "file": "index.json",
+      "version": "2.3.0",
+      "created": "2026-02-13 17:05",
+      "description": "אינדקס מרכזי המקשר את כל השיעורים"
+    },
+    {
+      "lessons_files": "lesson1.json to lesson10.json",
+      "version": "2.1.0",
+      "created": "2026-02-13 11:15 - 17:00",
+      "description": "קבצי תוכן הלימוד והשאלות"
+    }
+  ],
+  "instructions": "כדי להוסיף שיעור חדש: יש ליצור קובץ lessonX.json ולעדכן את index.json בהתאם."
+}
